@@ -2,11 +2,446 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta http-equiv="refresh" content="0; url=/openorca/">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="refresh" content="5; url=/openorca/">
   <link rel="canonical" href="https://open-orca-ai.github.io/openorca/">
-  <title>Redirecting to OpenOrca</title>
+  <title>OpenOrca — Local-First AI Coding Assistant</title>
+  <meta name="description" content="OpenOrca is a local-first AI coding assistant that runs entirely on your machine. No cloud, no telemetry, full control.">
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --cyan: #22d3ee;
+      --cyan-dark: #0e7490;
+      --cyan-glow: rgba(34, 211, 238, 0.35);
+      --bg-deep: #0a0e27;
+      --bg-mid: #0c1426;
+      --bg-teal: #091b2a;
+      --text: #ffffff;
+      --text-muted: #94a3b8;
+      --glass-bg: rgba(255, 255, 255, 0.05);
+      --glass-border: rgba(255, 255, 255, 0.1);
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(170deg, var(--bg-deep) 0%, var(--bg-mid) 40%, var(--bg-teal) 100%);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* --- Animated background gradient shift --- */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at 30% 20%, rgba(14, 116, 144, 0.15) 0%, transparent 60%),
+                  radial-gradient(ellipse at 70% 80%, rgba(34, 211, 238, 0.08) 0%, transparent 50%);
+      animation: ambientShift 8s ease-in-out infinite alternate;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes ambientShift {
+      0% { opacity: 0.6; }
+      100% { opacity: 1; }
+    }
+
+    /* --- Bubbles --- */
+    .bubbles {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .bubble {
+      position: absolute;
+      bottom: -80px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, rgba(34, 211, 238, 0.12), rgba(34, 211, 238, 0.03));
+      border: 1px solid rgba(34, 211, 238, 0.08);
+      animation: rise linear infinite;
+    }
+
+    .bubble:nth-child(1)  { left:  5%; width: 20px; height: 20px; animation-duration: 14s; animation-delay: 0s; }
+    .bubble:nth-child(2)  { left: 15%; width: 35px; height: 35px; animation-duration: 18s; animation-delay: 2s; }
+    .bubble:nth-child(3)  { left: 28%; width: 15px; height: 15px; animation-duration: 12s; animation-delay: 4s; }
+    .bubble:nth-child(4)  { left: 40%; width: 28px; height: 28px; animation-duration: 16s; animation-delay: 1s; }
+    .bubble:nth-child(5)  { left: 55%; width: 22px; height: 22px; animation-duration: 20s; animation-delay: 3s; }
+    .bubble:nth-child(6)  { left: 65%; width: 40px; height: 40px; animation-duration: 22s; animation-delay: 5s; }
+    .bubble:nth-child(7)  { left: 78%; width: 18px; height: 18px; animation-duration: 13s; animation-delay: 7s; }
+    .bubble:nth-child(8)  { left: 88%; width: 30px; height: 30px; animation-duration: 17s; animation-delay: 0.5s; }
+    .bubble:nth-child(9)  { left: 35%; width: 12px; height: 12px; animation-duration: 15s; animation-delay: 6s; }
+    .bubble:nth-child(10) { left: 72%; width: 25px; height: 25px; animation-duration: 19s; animation-delay: 8s; }
+    .bubble:nth-child(11) { left: 48%; width: 16px; height: 16px; animation-duration: 21s; animation-delay: 3.5s; }
+    .bubble:nth-child(12) { left: 92%; width: 14px; height: 14px; animation-duration: 11s; animation-delay: 1.5s; }
+
+    @keyframes rise {
+      0% {
+        transform: translateY(0) translateX(0) scale(1);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-110vh) translateX(30px) scale(0.6);
+        opacity: 0;
+      }
+    }
+
+    /* --- Ocean waves --- */
+    .waves {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 160px;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .wave {
+      position: absolute;
+      bottom: 0;
+      left: -5%;
+      width: 110%;
+      animation-timing-function: ease-in-out;
+      animation-iteration-count: infinite;
+      animation-direction: alternate;
+    }
+
+    .wave--1 {
+      animation: waveMotion1 6s ease-in-out infinite alternate;
+      opacity: 0.3;
+    }
+
+    .wave--2 {
+      animation: waveMotion2 8s ease-in-out infinite alternate;
+      opacity: 0.2;
+    }
+
+    .wave--3 {
+      animation: waveMotion3 10s ease-in-out infinite alternate;
+      opacity: 0.15;
+    }
+
+    @keyframes waveMotion1 {
+      0%   { transform: translateX(0) translateY(0); }
+      100% { transform: translateX(-20px) translateY(-5px); }
+    }
+
+    @keyframes waveMotion2 {
+      0%   { transform: translateX(0) translateY(0); }
+      100% { transform: translateX(25px) translateY(-8px); }
+    }
+
+    @keyframes waveMotion3 {
+      0%   { transform: translateX(0) translateY(0); }
+      100% { transform: translateX(-15px) translateY(-3px); }
+    }
+
+    /* --- Hero card --- */
+    .hero {
+      position: relative;
+      z-index: 1;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 3rem 3.5rem;
+      max-width: 520px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+                  0 0 80px rgba(34, 211, 238, 0.05);
+      animation: cardAppear 0.8s ease-out;
+    }
+
+    @keyframes cardAppear {
+      0% {
+        opacity: 0;
+        transform: translateY(30px) scale(0.97);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* --- Mascot --- */
+    .mascot {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 1.5rem;
+      animation: float 4s ease-in-out infinite;
+      filter: drop-shadow(0 0 24px var(--cyan-glow));
+    }
+
+    .mascot img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-12px); }
+    }
+
+    /* --- Title --- */
+    .title {
+      font-size: 2.75rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, var(--text) 30%, var(--cyan) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.15;
+    }
+
+    /* --- Tagline --- */
+    .tagline {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 2rem;
+      max-width: 380px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* --- Buttons --- */
+    .buttons {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.7rem 1.5rem;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .btn--primary {
+      background: linear-gradient(135deg, var(--cyan) 0%, var(--cyan-dark) 100%);
+      color: var(--bg-deep);
+      border: none;
+      box-shadow: 0 4px 15px rgba(34, 211, 238, 0.3);
+    }
+
+    .btn--primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(34, 211, 238, 0.45);
+    }
+
+    .btn--outline {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--glass-border);
+    }
+
+    .btn--outline:hover {
+      border-color: var(--cyan);
+      color: var(--cyan);
+      transform: translateY(-2px);
+    }
+
+    .btn svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    /* --- Redirect notice --- */
+    .redirect {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      opacity: 0.7;
+    }
+
+    .redirect-bar {
+      width: 100%;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 2px;
+      margin-top: 0.75rem;
+      overflow: hidden;
+    }
+
+    .redirect-bar__fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--cyan), var(--cyan-dark));
+      border-radius: 2px;
+      animation: fillBar 5s linear forwards;
+    }
+
+    @keyframes fillBar {
+      0%   { width: 0%; }
+      100% { width: 100%; }
+    }
+
+    /* --- Reduced motion --- */
+    @media (prefers-reduced-motion: reduce) {
+      .bubble,
+      .wave--1,
+      .wave--2,
+      .wave--3,
+      .mascot,
+      body::before,
+      .redirect-bar__fill {
+        animation: none;
+      }
+
+      .mascot {
+        filter: drop-shadow(0 0 16px var(--cyan-glow));
+      }
+
+      .redirect-bar__fill {
+        width: 100%;
+      }
+
+      .hero {
+        animation: none;
+      }
+    }
+
+    /* --- Responsive --- */
+    @media (max-width: 480px) {
+      .hero {
+        padding: 2rem 1.5rem;
+        border-radius: 18px;
+      }
+
+      .title {
+        font-size: 2rem;
+      }
+
+      .tagline {
+        font-size: 0.95rem;
+      }
+
+      .mascot {
+        width: 90px;
+        height: 90px;
+      }
+
+      .waves {
+        height: 100px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <p>Redirecting to <a href="/openorca/">OpenOrca documentation</a>...</p>
+
+  <!-- Bubbles -->
+  <div class="bubbles" aria-hidden="true">
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+  </div>
+
+  <!-- Ocean waves -->
+  <div class="waves" aria-hidden="true">
+    <svg class="wave wave--1" viewBox="0 0 1440 160" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,64 C360,120 720,10 1080,80 C1260,110 1380,60 1440,72 L1440,160 L0,160 Z" fill="#22d3ee"/>
+    </svg>
+    <svg class="wave wave--2" viewBox="0 0 1440 160" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,96 C240,40 480,130 720,80 C960,30 1200,110 1440,64 L1440,160 L0,160 Z" fill="#0e7490"/>
+    </svg>
+    <svg class="wave wave--3" viewBox="0 0 1440 160" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,112 C180,70 360,140 540,90 C720,40 900,120 1080,70 C1260,20 1380,100 1440,80 L1440,160 L0,160 Z" fill="#091b2a"/>
+    </svg>
+  </div>
+
+  <!-- Hero card -->
+  <main class="hero" role="main">
+    <div class="mascot">
+      <img src="/openorca/img/orca_mascot.png" alt="OpenOrca mascot" width="120" height="120">
+    </div>
+
+    <h1 class="title">OpenOrca</h1>
+    <p class="tagline">A local-first AI coding assistant that runs entirely on your machine.</p>
+
+    <nav class="buttons" aria-label="Primary navigation">
+      <a href="/openorca/" class="btn btn--primary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+          <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+        </svg>
+        Explore the Docs
+      </a>
+      <a href="https://github.com/Open-Orca-AI/openOrca" class="btn btn--outline" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+        </svg>
+        GitHub
+      </a>
+    </nav>
+
+    <p class="redirect" id="redirect-text">Redirecting to docs in <span id="countdown">5</span>s&hellip;</p>
+    <div class="redirect-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+      <div class="redirect-bar__fill"></div>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      var seconds = 5;
+      var countdownEl = document.getElementById('countdown');
+      var redirectText = document.getElementById('redirect-text');
+      var timer = setInterval(function () {
+        seconds--;
+        if (countdownEl) countdownEl.textContent = seconds;
+        if (seconds <= 0) {
+          clearInterval(timer);
+          if (redirectText) redirectText.textContent = 'Redirecting\u2026';
+          window.location.href = '/openorca/';
+        }
+      }, 1000);
+    })();
+  </script>
 </body>
 </html>
