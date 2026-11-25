@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenOrca is now Abhoth</title>
+<meta name="robots" content="noindex">
+<link rel="canonical" href="{{ site.target }}/{{ include.path }}">
+<meta http-equiv="refresh" content="0; url={{ site.target }}/{{ include.path }}">
+<script>
+(function () {
+  var target = "{{ site.target }}";
+  // Old OpenOrca docs paths (Docusaurus, wiki page names) -> the matching Abhoth page.
+  var p = location.pathname.toLowerCase().replace(/^\/openorca(?=\/|$)/, "");
+  var map = [
+    [/install/, "docs/install/"],
+    [/quick-?start|getting-?started/, "docs/quick-start/"],
+    [/config|permission|hook|command|session|memory|checkpoint|project-instructions/, "docs/configuration/"],
+    [/model|llm|lm-?studio|ollama/, "docs/local-models/"],
+    [/web-?ui|hostui/, "docs/web-ui/"],
+    [/docker|deploy|self-?host/, "docs/docker/"],
+    [/router|routing|gateway/, "docs/router/"],
+    [/^\/(docs|wiki)(\/|$)/, "docs/"]
+  ];
+  var dest = "{{ include.path }}";
+  for (var i = 0; i < map.length; i++) if (map[i][0].test(p)) { dest = map[i][1]; break; }
+  location.replace(target + "/" + dest);
+})();
+</script>
+<style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#0e0816;color:#f4edfb;font:17px/1.6 system-ui,sans-serif;text-align:center;padding:20px}a{color:#ffcf70}</style>
+</head>
+<body>
+<main>
+<h1>OpenOrca is now Abhoth</h1>
+<p>OpenOrca was rewritten in Rust and renamed Abhoth. Your <code>~/.openorca</code> settings carry over.</p>
+<p><a href="{{ site.target }}/{{ include.path }}">Continue to Abhoth</a></p>
+</main>
+</body>
+</html>

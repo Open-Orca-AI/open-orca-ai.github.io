@@ -1,0 +1,4 @@
+# Where OpenOrca's old addresses send visitors now. Change this one line to move every redirect
+# (e.g. to https://abhoth.co.uk once that domain is live). No trailing slash.
+target: https://madninjaskillz.github.io/abhoth
+exclude: [README.md]
